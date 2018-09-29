@@ -3,9 +3,12 @@
 
 #include <iostream>
 
+#define EULER 2.718281828459045
+#define PI 3.1415926535
+
 double Interpreter::result = 0;
 bool Interpreter::justNumber = false;
-std::string Interpreter::numbers = "0123456789Aa.,";
+std::string Interpreter::numbers = "0123456789Aaep.,";
 std::string Interpreter::operators = "+-*/^_";
 std::string Interpreter::string = "";
 std::map<char, unsigned int> Interpreter::operation_order = {
@@ -17,7 +20,7 @@ std::map<char, unsigned int> Interpreter::operation_order = {
 	{'_', 2}
 };
 
-double Interpreter::interpret(char * _string)
+double Interpreter::interpret(std::string _string)
 {
 	string = _string;
 	justNumber = false;
@@ -77,17 +80,59 @@ bool Interpreter::createSymbolList(std::vector<Symbol*>& symbols)
 {
 	bool number = false;
 	bool hasOperator = false;
+	bool expectOperator = false;
 	std::string num = "";
 
 	for (char c : string)
 	{
 		if (std::find(std::begin(numbers), std::end(numbers), c) != std::end(numbers))
 		{
-			if (c == 'A' || c == 'a')
+			if (expectOperator)
 			{
-				//printf("%f", result);
-				symbols.push_back(new Number(result));
+				UNEXPECTED_SYMBOL;
 			}
+
+			if (number)
+			{
+				if (c == 'A' || c == 'a')
+				{
+					symbols.push_back(new Number(std::stod(num) * result));
+					expectOperator = true;
+				}
+
+				if (c == 'e')
+				{
+					symbols.push_back(new Number(std::stod(num) * EULER));
+					expectOperator = true;
+				}
+
+				if (c == 'p')
+				{
+					symbols.push_back(new Number(std::stod(num) * PI));
+					expectOperator = true;
+				}
+			}
+			else 
+			{
+				if (c == 'A' || c == 'a')
+				{
+					symbols.push_back(new Number(result));
+					expectOperator = true;
+				}
+
+				if (c == 'e')
+				{
+					symbols.push_back(new Number(EULER));
+					expectOperator = true;
+				}
+
+				if (c == 'p')
+				{
+					symbols.push_back(new Number(PI));
+					expectOperator = true;
+				}
+			}
+
 			if (c == '.' || c == ',')
 			{
 				num += '.';
@@ -101,15 +146,16 @@ bool Interpreter::createSymbolList(std::vector<Symbol*>& symbols)
 
 		if (std::find(std::begin(operators), std::end(operators), c) != std::end(operators))
 		{
+			
 			hasOperator = true;
 			if (number == true)
 			{
 				//std::cout << "++++++++++++" << num << "++++++++++++++" << std::endl;
-				if (num != "")
+				if (num != "" && !expectOperator)
 				{
 					try
 					{
-						if (number == true) symbols.push_back(new Number(std::stod(num)));
+						symbols.push_back(new Number(std::stod(num)));
 					}
 					catch (...)
 					{
@@ -131,6 +177,8 @@ bool Interpreter::createSymbolList(std::vector<Symbol*>& symbols)
 					TOO_MANY_OPERATORS;
 				}
 			}
+
+			expectOperator = false;
 			
 		}
 	}
@@ -140,7 +188,7 @@ bool Interpreter::createSymbolList(std::vector<Symbol*>& symbols)
 		ILLEGAL_OPERATOR_POSITION;
 	}
 
-	if (num != "")
+	if (num != "" && !expectOperator)
 	{
 		try
 		{
@@ -158,6 +206,14 @@ bool Interpreter::createSymbolList(std::vector<Symbol*>& symbols)
 		result = symbols[0]->value();
 		return true;
 	}
+
+	/*for (auto it : symbols)
+	{
+		if(it->isNumber())
+			std::cout << it->value() << std::endl;
+		else
+			std::cout << (char)it->value() << std::endl;
+	}*/
 
 	return true;
 }

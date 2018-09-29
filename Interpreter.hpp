@@ -8,7 +8,7 @@
 class Interpreter
 {
 public:
-	static double interpret(char* _string);
+	static double interpret(std::string _string);
 
 private:
 	static bool scanForErrors();

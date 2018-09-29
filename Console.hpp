@@ -1,6 +1,6 @@
 #pragma once
 
-const constexpr unsigned int INPUT_BUFFER_SIZE = 256;
+#include <string>
 
 class Console
 {
@@ -12,7 +12,7 @@ public:
 	static void run();
 	
 private:
-	static char* input;
+	static std::string input;
 
 	///////////////////////////////////////////////////////////
 	/// \brief Waits for user input and writes it into a variable

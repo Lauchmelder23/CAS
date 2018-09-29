@@ -10,6 +10,7 @@
 #define TOKEN_LIST_ERROR			INTERPRETER_ERROR	<< "Failed to create Token list +++" << std::endl; return false
 #define TOO_MANY_OPERATORS			INTERPRETER_ERROR	<< "Found multiple operators in sequence +++" << std::endl; return false
 #define ILLEGAL_OPERATOR_POSITION	INTERPRETER_ERROR	<< "An operator was found in an illegal position +++" << std::endl; return false
+#define UNEXPECTED_SYMBOL			INTERPRETER_ERROR	<< "<ans> symbol must be followed by an operator symbol +++" << std::endl; return false
 
 #define INTEGER_TOO_BIG(x)			INTEGER_ERROR		<< "Integer <" << (x) << "> cannot be converted to int +++" << std::endl; return false;
 #define ENDS_ON_DECIMAL_POINT		INTEGER_ERROR		<< "Integers cannot end with a decimal point +++" << std::endl; return false
